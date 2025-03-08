@@ -13,6 +13,7 @@ import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema
     { name: RefreshToken.name, schema: RefreshTokenSchema },
   ]),
   JwtModule.registerAsync({
+    global: true,
     useFactory: (config: ConfigService) => ({
       secret: config.get('jwt.secret'),
       signOptions: { expiresIn: config.get('jwt.expiresIn') }

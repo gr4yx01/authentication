@@ -68,11 +68,7 @@ export class AuthService {
             throw new NotFoundException("Invalid token")
         }
 
-        const { userId } = tokenExist
-
-        await this.refreshTokenModel.deleteOne({ token })
-        
-        return this.generateToken(userId)
+        return this.generateToken(tokenExist.userId)
     }
 
     async generateToken(userId) {
@@ -92,10 +88,10 @@ export class AuthService {
 
         expiryDate.setDate(expiryDate.getDate() + 3)
 
-        await this.refreshTokenModel.create({
+        await this.refreshTokenModel.updateOne({
             token,
-            userId,
-            expiryDate
-        })
+            userId
+        }, { $set: { expiryDate, token } }, { upsert: true })
+
     }
 }
