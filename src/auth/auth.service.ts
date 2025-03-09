@@ -71,6 +71,32 @@ export class AuthService {
         return this.generateToken(tokenExist.userId)
     }
 
+    async changePassword(oldPassword: string, newPassword: string, userId: string) {
+        const userExist = await this.userModel.findById(userId)
+
+        if(!userExist) {
+            throw new NotFoundException("Account not found")
+        }
+
+        const oldPasswordMatch = await bcrypt.compare(oldPassword, userExist.password)
+
+        if(!oldPasswordMatch) {
+            throw new BadRequestException("Old password is incorrect")
+        }
+
+        const password = await bcrypt.hash(newPassword, Number(this.config.get('bcrypt.saltOrRounds')))
+
+        userExist.password = password
+
+        userExist.save()
+
+        return userExist
+    }
+
+    async forgetPassword(email: string) {
+
+    }
+
     async generateToken(userId) {
         const accessToken = this.jwtService.sign({ userId })
         const refreshToken = uuidv4()
