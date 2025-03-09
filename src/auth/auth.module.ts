@@ -6,11 +6,14 @@ import { User, UserSchema } from './schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
+import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
+import { MailService } from 'src/services/mail.service';
 
 @Module({
   imports: [MongooseModule.forFeature([
     { name: User.name, schema: UserSchema },
     { name: RefreshToken.name, schema: RefreshTokenSchema },
+    { name: ResetToken.name, schema: ResetTokenSchema },
   ]),
   JwtModule.registerAsync({
     global: true,
@@ -22,6 +25,6 @@ import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema
   })
 ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, MailService],
 })
 export class AuthModule {}
